@@ -11,7 +11,7 @@ namespace ZigbeeNet.CC
         public ArgumentCollection ResponseArguments { get; set; }
 
         public ZpiSREQ(ZpiObject zpiObject)
-            : this(zpiObject.SubSystem, zpiObject.CommandId)
+            : this(zpiObject.CommandSubsystem, zpiObject.CommandId)
         {
             Type = zpiObject.Type;
             RequestArguments = zpiObject.RequestArguments;
@@ -23,69 +23,69 @@ namespace ZigbeeNet.CC
             ResponseArguments = new ArgumentCollection();
         }
 
-        public ZpiSREQ(SubSystem subSystem, MessageType type, byte commandId)
+        public ZpiSREQ(CommandSubsystem subSystem, MessageType type, byte commandId)
             : this(subSystem, (byte)commandId)
         {
             Type = type;
         }
 
         public ZpiSREQ(SYS.SysCommand sysCmd)
-            : this(SubSystem.SYS, (byte)sysCmd)
+            : this(CommandSubsystem.SYS, (byte)sysCmd)
         {
 
         }
 
         public ZpiSREQ(ZDO.ZdoCommand zdoCmd)
-            : this(SubSystem.ZDO, (byte)zdoCmd)
+            : this(CommandSubsystem.ZDO, (byte)zdoCmd)
         {
 
         }
 
         public ZpiSREQ(AF.AfCommand afCmd)
-            : this(SubSystem.AF, (byte)afCmd)
+            : this(CommandSubsystem.AF, (byte)afCmd)
         {
 
         }
 
         public ZpiSREQ(APP.AppCommand appCmd)
-            : this(SubSystem.APP, (byte)appCmd)
+            : this(CommandSubsystem.APP, (byte)appCmd)
         {
 
         }
 
         public ZpiSREQ(MAC.MacCommand macCmd)
-            : this(SubSystem.MAC, (byte)macCmd)
+            : this(CommandSubsystem.MAC, (byte)macCmd)
         {
 
         }
 
         public ZpiSREQ(SAPI.SapiCommand sapiCmd)
-            : this(SubSystem.SAPI, (byte)sapiCmd)
+            : this(CommandSubsystem.SAPI, (byte)sapiCmd)
         {
 
         }
 
         public ZpiSREQ(UTIL.UtilCommand utilCmd)
-            : this(SubSystem.UTIL, (byte)utilCmd)
+            : this(CommandSubsystem.UTIL, (byte)utilCmd)
         {
 
         }
 
         public ZpiSREQ(DBG.DbgCommand dbgCmd)
-            : this(SubSystem.DBG, (byte)dbgCmd)
+            : this(CommandSubsystem.DBG, (byte)dbgCmd)
         {
 
         }
 
         public ZpiSREQ(DEBUG.DebugCommand debugCmd)
-            : this(SubSystem.DEBUG, (byte)debugCmd)
+            : this(CommandSubsystem.DEBUG, (byte)debugCmd)
         {
 
         }
 
-        public ZpiSREQ(SubSystem subSystem, byte cmdId)
+        public ZpiSREQ(CommandSubsystem subSystem, byte cmdId)
         {
-            SubSystem = subSystem;
+            CommandSubsystem = subSystem;
             CommandId = cmdId;
 
             ZpiObject zpi = ZpiMeta.GetCommand(subSystem, cmdId);
@@ -104,8 +104,8 @@ namespace ZigbeeNet.CC
 
         public async override void RequestAsync(IHardwareChannel znp)
         {
-            byte[] data = await this.ToSerialPacket().ToFrame().ConfigureAwait(false);
-            await znp.SendAsync(data).ConfigureAwait(false);
+            //byte[] data = await this.ToSerialPacket().ToFrame().ConfigureAwait(false);
+            //await znp.SendAsync(data).ConfigureAwait(false);
         }
 
         public override void Parse(MessageType type, int length, byte[] buffer)

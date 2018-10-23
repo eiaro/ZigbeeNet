@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ZigbeeNet.CC
 {
-    public enum SubSystem : byte
+    public enum CommandSubsystem : byte
     {
         RES = 0x00,
         SYS = 0x01,

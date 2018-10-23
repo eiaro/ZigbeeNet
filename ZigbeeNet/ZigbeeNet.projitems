@@ -12,17 +12,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)CC\ArgumentCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\CCZnp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\IHardwareChannel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CC\ProtocolPackets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\NodeEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\CommandType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\ProtocolPackets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\SerialPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\SYS_RESET.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\SYS_RESET_RESPONSE.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\UnifiedNetworkProcessorInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\ApiType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\DeviceEnabled.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\DeviceState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\DeviceStatus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\MessageTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\MessageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\Options.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\ParamType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\Status.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CC\Enums\SubSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CC\Packets\CommandSubsystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Layers\AF\Enums\AfCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Layers\AF\Enums\InterpanCtl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\Layers\AF\Enums\NetworkLatencyReq.cs" />
@@ -77,6 +82,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CC\ZpiObjectExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CC\ZpiSREQ.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventBridge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Options.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ZclBridge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ZCL\Commands\ReadAttributesCommand.cs" />
@@ -96,7 +102,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ZCL\ZclMeta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ZCL\ZclPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ZigbeeController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ZigbeeService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)CC\Layers\APP\Request\" />

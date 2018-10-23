@@ -12,7 +12,7 @@ namespace ZigbeeNet.CC
     {
         public virtual MessageType Type { get; set; }
 
-        public virtual SubSystem SubSystem { get; set; }
+        public virtual CommandSubsystem CommandSubsystem { get; set; }
 
         public virtual byte CommandId { get; set; }
 
@@ -25,13 +25,13 @@ namespace ZigbeeNet.CC
             {
                 if(_indObject == null)
                 {
-                    if (SubSystem == SubSystem.ZDO)
+                    if (CommandSubsystem == CommandSubsystem.ZDO)
                     {
                         if (ZdoMeta.ZdoObjects.ContainsKey((ZdoCommand)CommandId))
                         {
                             ZdoMetaItem zdo = ZdoMeta.ZdoObjects[(ZdoCommand)CommandId];
 
-                            _indObject = ZpiMeta.GetCommand(SubSystem.ZDO, (byte)zdo.ResponseInd);
+                            _indObject = ZpiMeta.GetCommand(CommandSubsystem.ZDO, (byte)zdo.ResponseInd);
                         }
                     }
                 }
@@ -62,72 +62,72 @@ namespace ZigbeeNet.CC
             RequestArguments = new ArgumentCollection();
         }
 
-        public ZpiObject(SubSystem subSystem, MessageType type, byte commandId)
-            : this(subSystem, (byte)commandId)
+        public ZpiObject(CommandSubsystem commandSubsystem, MessageType type, byte commandId)
+            : this(commandSubsystem, (byte)commandId)
         {
             Type = type;
         }
 
         public ZpiObject(SYS.SysCommand sysCmd)
-            : this(SubSystem.SYS, (byte)sysCmd)
+            : this(CommandSubsystem.SYS, (byte)sysCmd)
         {
 
         }
 
         public ZpiObject(ZDO.ZdoCommand zdoCmd)
-            :this(SubSystem.ZDO, (byte)zdoCmd)
+            :this(CommandSubsystem.ZDO, (byte)zdoCmd)
         {
             
         }
 
         public ZpiObject(AF.AfCommand afCmd)
-            : this(SubSystem.AF, (byte)afCmd)
+            : this(CommandSubsystem.AF, (byte)afCmd)
         {
 
         }
 
         public ZpiObject(APP.AppCommand appCmd)
-            : this(SubSystem.APP, (byte)appCmd)
+            : this(CommandSubsystem.APP, (byte)appCmd)
         {
 
         }
 
         public ZpiObject(MAC.MacCommand macCmd)
-            : this(SubSystem.MAC, (byte)macCmd)
+            : this(CommandSubsystem.MAC, (byte)macCmd)
         {
 
         }
 
         public ZpiObject(SAPI.SapiCommand sapiCmd)
-            : this(SubSystem.SAPI, (byte)sapiCmd)
+            : this(CommandSubsystem.SAPI, (byte)sapiCmd)
         {
 
         }
 
         public ZpiObject(UTIL.UtilCommand utilCmd)
-            : this(SubSystem.UTIL, (byte)utilCmd)
+            : this(CommandSubsystem.UTIL, (byte)utilCmd)
         {
 
         }
 
         public ZpiObject(DBG.DbgCommand dbgCmd)
-            : this(SubSystem.DBG, (byte)dbgCmd)
+            : this(CommandSubsystem.DBG, (byte)dbgCmd)
         {
 
         }
 
         public ZpiObject(DEBUG.DebugCommand debugCmd)
-            : this(SubSystem.DEBUG, (byte)debugCmd)
+            : this(CommandSubsystem.DEBUG, (byte)debugCmd)
         {
 
         }
 
-        public ZpiObject(SubSystem subSystem, byte cmdId)
+        public ZpiObject(CommandSubsystem commandSubsystem, byte cmdId)
         {
-            SubSystem = subSystem;
+            CommandSubsystem = commandSubsystem;
             CommandId = cmdId;
 
-            ZpiObject zpi = ZpiMeta.GetCommand(subSystem, cmdId);
+            ZpiObject zpi = ZpiMeta.GetCommand(commandSubsystem, cmdId);
 
             if (zpi != null)
             {
@@ -158,9 +158,9 @@ namespace ZigbeeNet.CC
 
         public async virtual void RequestAsync(IHardwareChannel znp)
         {
-            byte[] data = await this.ToSerialPacket().ToFrame().ConfigureAwait(false);
+            //byte[] data = await this.ToSerialPacket().ToFrame().ConfigureAwait(false);
 
-            await znp.SendAsync(data).ConfigureAwait(false);
+            //await znp.SendAsync(data).ConfigureAwait(false);
         }
 
         protected void ParseArguments(ArgumentCollection arguments, int length, byte[] buffer)
@@ -338,14 +338,14 @@ namespace ZigbeeNet.CC
             }
         }
 
-        public SerialPacket ToSerialPacket()
-        {
-            return new SerialPacket(this.Type, this.SubSystem, this.CommandId, this.Frame);
-        }
+        //public SerialPacket ToSerialPacket()
+        //{
+        //    return new SerialPacket(this.Type, this.CommandSubsystem, this.CommandId, this.Frame);
+        //}
 
         public override string ToString()
         {
-            return $"{SubSystem} - {Type} - {CommandId} {Name}";
+            return $"{CommandSubsystem} - {Type} - {CommandId} {Name}";
         }
     }
 }

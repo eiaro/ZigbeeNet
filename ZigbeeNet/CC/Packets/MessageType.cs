@@ -28,9 +28,5 @@ namespace ZigbeeNet.CC
         /// Synchronous Response
         /// </summary>
         SRSP = 0x03,
-        RES0 = 0x04,
-        RES1 = 0x05,
-        RES2 = 0x06,
-        RES3 = 0x07
     }
 }

@@ -1,10 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ZigbeeNet.CC
 {
     /// <summary>
-    /// Interface for a hardware specific channel. This should reside in the ZCL part of the library
+    /// Interface for a hardware specific Channel. This should reside in the ZCL part of the library
     /// and all hardware implementations should implement this interface
     /// TODO
     /// Add events for received events
@@ -14,8 +15,11 @@ namespace ZigbeeNet.CC
     {
         void Open();
         void Close();
-        Task<byte[]> SendAsync(byte[] payload);
+        event EventHandler<NodeEventArgs> NodeEventReceived;
+        event EventHandler<ErrorEventArgs> Error;
+        event EventHandler Closed;
 
-        Task<byte[]> PermitJoinAsync(int time);
+        Task<byte[]> SendAsync(SerialPacket payload, Func<SerialPacket, bool> predicate,
+            CancellationToken cancellationToken);
     }
 }

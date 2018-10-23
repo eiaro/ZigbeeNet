@@ -11,150 +11,71 @@ using System.Threading;
 
 namespace ZigbeeNet
 {
+    public class ErrorEventArgs : EventArgs
+    {
+        public readonly Exception Error;
+
+        public ErrorEventArgs(Exception error)
+        {
+            Error = error;
+        }
+    }
+
     public class ZigbeeController
     {
-        private Options _options;
+        public IHardwareChannel Channel;
+        public event EventHandler<ErrorEventArgs> Error;
+        public event EventHandler ChannelClosed;
 
-        public ZigbeeService Service { get; }
-        public IHardwareChannel Znp { get; set; }
-
-        public event EventHandler Started;
-        public event EventHandler Stoped;
-        public event EventHandler<ZpiObject> NewPacket;
-        public event EventHandler<ZpiObject> PermitJoining;
-        public event EventHandler<Device> NewDevice;
-
-        private ConcurrentQueue<EndDeviceAnnouncedInd> _joinQueue;
-        private bool _spinLock;
-        private byte _transId;
-
-        public ZigbeeController(ZigbeeService service, Options options)
+        private ZigbeeController(IHardwareChannel channel)
         {
-            _options = options;
-            _joinQueue = new ConcurrentQueue<EndDeviceAnnouncedInd>();
-
-            Service = service;
-
-            Znp = new CCZnp();
+            this.Channel = channel;
         }
 
-        private void Znp_SyncResponse(object sender, ZpiObject e)
+        public ZigbeeController(string portName)
+        :this(new CCZnp(portName))
         {
-            NewPacket?.Invoke(this, e);
         }
 
-        private void Znp_AsyncResponse(object sender, ZpiObject e)
+        protected virtual void OnError(ErrorEventArgs e)
         {
-            NewPacket?.Invoke(this, e);
-
-            if (e.SubSystem == SubSystem.ZDO && e.CommandId == (byte)ZdoCommand.endDeviceAnnceInd)
-            {
-                EndDeviceAnnouncedInd ind = e.ToSpecificObject<EndDeviceAnnouncedInd>();
-                if (_spinLock)
-                {
-                    if(_joinQueue.Where(zpi => zpi.IeeeAddress == ind.IeeeAddress).Count() > 0)
-                    {
-                        return;
-                    }
-
-                    _joinQueue.Enqueue(ind);
-                }
-                else
-                {
-                    _spinLock = true;
-                    endDeviceAnnceHdlr(ind);
-                }
-            }
-            if(e.SubSystem == SubSystem.ZDO && e.CommandId == (byte)ZdoCommand.mgmtPermitJoinRsp)
-            {
-                PermitJoining?.Invoke(this, e);
-            }
+            Error?.Invoke(this,e);
         }
 
-        private void Znp_Ready(object sender, EventArgs e)
+        protected virtual void OnChannelClose(EventArgs e)
         {
-            StartRequest startRequest = new StartRequest();
-            startRequest.OnResponse += StartRequest_OnResponse;
-            startRequest.RequestAsync(Znp);
+            ChannelClosed?.Invoke(this, e);
         }
 
-        private void StartRequest_OnResponse(object sender, ZpiObject e)
+        public void Open()
         {
-            Started?.Invoke(this, EventArgs.Empty);
-        }
-        
-        private void BootCoordFromApp()
-        {
-
+            Channel.NodeEventReceived += Channel_NodeEventReceived;
+            Channel.Error += ChannelOnError;
+            Channel.Closed += Channel_Closed;
+            Channel.Open();
         }
 
-        public void Init()
+        public void Close()
         {
-            
+            Channel.NodeEventReceived -= Channel_NodeEventReceived;
+            Channel.Error -= ChannelOnError;
+            Channel.Closed -= Channel_Closed;
+            Channel.Close();
         }
 
-        public void Start()
+        private void Channel_Closed(object sender, EventArgs e)
         {
-            Znp.Open();
+            throw new NotImplementedException();
         }
 
-        public void Stop()
+        private void ChannelOnError(object sender, ErrorEventArgs e)
         {
-            Znp.Close();
+            throw new NotImplementedException();
         }
 
-        private void endDeviceAnnceHdlr(EndDeviceAnnouncedInd deviceInd)
+        private void Channel_NodeEventReceived(object sender, NodeEventArgs e)
         {
-            //TODO: Try to get device from device db and check status if it is online. If true continue with next ind
-            Device device = null;
-            if (device != null && device.Status == DeviceStatus.Online)
-            {
-                Console.WriteLine("Device already in Network");
-
-                EndDeviceAnnouncedInd removed = null;
-                if (_joinQueue.TryDequeue(out removed))
-                {
-                    EndDeviceAnnouncedInd next = null;
-
-                    if (_joinQueue.TryDequeue(out next))
-                    {
-                        endDeviceAnnceHdlr(next);
-                    } else
-                    {
-                        _spinLock = false;
-                    }
-                }
-
-                return;
-            }
-
-            //TODO: Timeout
-
-            Query query = new Query(Znp);
-
-            query.GetDevice(deviceInd.NetworkAddress, deviceInd.IeeeAddress, (dev) =>
-            {
-                NewDevice?.Invoke(this, dev);
-            });
-        }
-
-        public void PermitJoin(int time)
-        {
-            if (time > 255 || time < 0)
-            {
-                throw new ArgumentOutOfRangeException("time", "Given value for 'time' have to be greater than 0 and less than 255");
-            }
-
-            Znp.PermitJoinAsync(time);
-        }
-
-        internal byte NextTransId()
-        {  // zigbee transection id
-
-            if (++_transId > 255)
-                _transId = 1;
-
-            return _transId;
+            throw new NotImplementedException();
         }
     }
 }

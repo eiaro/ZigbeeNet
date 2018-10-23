@@ -22,15 +22,15 @@ namespace ZigbeeNet.CC
             }
         }
 
-        private static Dictionary<SubSystem, List<ZpiObject>> _zpiObjects;
+        private static Dictionary<CommandSubsystem, List<ZpiObject>> _zpiObjects;
 
-        public static Dictionary<SubSystem, List<ZpiObject>> ZpiObjects
+        public static Dictionary<CommandSubsystem, List<ZpiObject>> ZpiObjects
         {
             get
             {
                 if(_zpiObjects == null)
                 {
-                    _zpiObjects = new Dictionary<SubSystem, List<ZpiObject>>();
+                    _zpiObjects = new Dictionary<CommandSubsystem, List<ZpiObject>>();
 
                     JObject jSubSys = JsonConvert.DeserializeObject<JObject>(zclMetaFile);
 
@@ -46,7 +46,7 @@ namespace ZigbeeNet.CC
             foreach (JObject subSys in root.Values())
             {
                 string subSysName = subSys.Path;
-                SubSystem subSystem = (SubSystem)subSys["id"].Value<int>();
+                CommandSubsystem subSystem = (CommandSubsystem)subSys["id"].Value<int>();
 
                 if(_zpiObjects.ContainsKey(subSystem) == false)
                 {
@@ -62,7 +62,7 @@ namespace ZigbeeNet.CC
                         zpiSREQ.Name = attr.Path.Substring(attr.Path.LastIndexOf(".") + 1);
                         zpiSREQ.CommandId = (byte)attr["cmdId"].Value<byte>();
                         zpiSREQ.Type = (MessageType)attr["type"].Value<int>();
-                        zpiSREQ.SubSystem = subSystem;
+                        zpiSREQ.CommandSubsystem = subSystem;
 
                         foreach (JObject item in attr["params"]["req"])
                         {
@@ -103,7 +103,7 @@ namespace ZigbeeNet.CC
                         zpiObject.Name = attr.Path.Substring(attr.Path.LastIndexOf(".") + 1);
                         zpiObject.CommandId = (byte)attr["cmdId"].Value<byte>();
                         zpiObject.Type = (MessageType)attr["type"].Value<int>();
-                        zpiObject.SubSystem = subSystem;
+                        zpiObject.CommandSubsystem = subSystem;
 
                         foreach (JObject item in attr["params"]["req"])
                         {
@@ -128,19 +128,19 @@ namespace ZigbeeNet.CC
 
         public static void Init()
         {
-            _zpiObjects = new Dictionary<SubSystem, List<ZpiObject>>();
+            _zpiObjects = new Dictionary<CommandSubsystem, List<ZpiObject>>();
 
             JObject jSubSys = JsonConvert.DeserializeObject<JObject>(zclMetaFile);
 
             LoadSubSys(jSubSys);
         }
 
-        public static ZpiObject GetCommand(SubSystem subSystem, byte cmdId)
+        public static ZpiObject GetCommand(CommandSubsystem subSystem, byte cmdId)
         {
             return ZpiObjects[subSystem].SingleOrDefault(cmd => cmd.CommandId == cmdId);
         }
 
-        public static MessageType GetMessageType(SubSystem subSystem, byte cmdId)
+        public static MessageType GetMessageType(CommandSubsystem subSystem, byte cmdId)
         {
             return GetCommand(subSystem, cmdId).Type;
         }
